@@ -1,13 +1,21 @@
+CREATE TABLE `User`(
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `name` VARCHAR(255) NOT NULL
+);
+
 CREATE TABLE `Cart`(
     `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `userId` BIGINT NOT NULL,
     `totalPrice` BIGINT NOT NULL
 );
-CREATE TABLE `User`(
+
+CREATE TABLE `CartItem`(
     `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `name` VARCHAR(255) NOT NULL,
-    `cart` BIGINT NOT NULL
+    `cartId` BIGINT NOT NULL,
+    `itemId` BIGINT NOT NULL,
+    `quantity` BIGINT NOT NULL
 );
+
 CREATE TABLE `Item`(
     `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `productId` BIGINT NOT NULL,
@@ -17,31 +25,35 @@ CREATE TABLE `Item`(
     `unitPrice` BIGINT NOT NULL,
     `price` BIGINT NOT NULL,
     `saleRate` BIGINT NOT NULL,
-    `mebershipPrice` BIGINT NOT NULL,
-    `mebershipSaleRate` BIGINT NOT NULL,
-    `itemType` ENUM('') NOT NULL,
-    `deliveryType` ENUM('') NOT NULL
+    `itemType` ENUM('PARTNER', 'OTHERS') NOT NULL,
+    `deliveryType` ENUM('FREE', 'CONDITIONAL') NOT NULL
 );
-CREATE TABLE `CartItem`(
-    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `cartId` BIGINT NOT NULL,
-    `itemId` BIGINT NOT NULL
+
+CREATE TABLE `MembershipItem`(
+     `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+     `membershipUnitPrice` BIGINT NOT NULL,
+     `membershipPrice` BIGINT NOT NULL,
+     `membershipSaleRate` BIGINT NOT NULL
 );
+
 CREATE TABLE `Product`(
     `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `name` VARCHAR(255) NOT NULL
 );
+
 CREATE TABLE `Membership`(
     `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `type` ENUM('') NOT NULL,
     `price` BIGINT NOT NULL
 );
+
 CREATE TABLE `UserMembership`(
     `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `userId` BIGINT NOT NULL,
     `membershipId` BIGINT NOT NULL,
-    `paymentDate` BIGINT NOT NULL
+    `paymentDate` DATE NOT NULL
 );
+
 ALTER TABLE
     `UserMembership` ADD CONSTRAINT `usermembership_userid_foreign` FOREIGN KEY(`userId`) REFERENCES `User`(`id`);
 ALTER TABLE
@@ -54,3 +66,5 @@ ALTER TABLE
     `CartItem` ADD CONSTRAINT `cartitem_cartid_foreign` FOREIGN KEY(`cartId`) REFERENCES `Cart`(`id`);
 ALTER TABLE
     `Cart` ADD CONSTRAINT `cart_userid_foreign` FOREIGN KEY(`userId`) REFERENCES `User`(`id`);
+ALTER TABLE
+    `Item` ADD CONSTRAINT `item_id_foreign` FOREIGN KEY(`id`) REFERENCES `MembershipItem`(`id`);
